@@ -387,6 +387,9 @@ if (ISSET($_POST["confirmnew_repo"])) {
 
 	if (sanitize_input($db,$_POST["end_date"],10) == 'custom') {
 		$end_date = sanitize_input($db,$_POST["custom_end"],10);
+	} else {
+		// Set a default end date for unending tags
+		$end_date = '9999-12-31';
 	}
 
 	if ($tag &&
@@ -395,26 +398,12 @@ if (ISSET($_POST["confirmnew_repo"])) {
 	$email &&
 	$start_date <= $end_date) {
 
-		// Tag that ends on a specific date
 		$query = "INSERT INTO special_tags (tag,start_date,end_date,email)
 			VALUES ('" . $tag . "','" . $start_date . "','" . $end_date . "',
 			'" . $email . "')";
 
 		query_db($db,$query,"inserting custom tag");
 
-	} elseif ($tag &&
-	$start_date &&
-	$email &&
-	!$end_date) {
-
-		// Tag that doesn't end on a specific date
-		$query = "INSERT INTO special_tags (tag,start_date,email)
-			VALUES ('" . $tag . "','" . $start_date . "','" . $email . "')";
-
-		query_db($db,$query,"inserting custom tag without end date");
-
-	} else {
-		echo 'incomplete';
 	}
 
 	header("Location: tags");
@@ -697,7 +686,7 @@ if (ISSET($_POST["confirmnew_repo"])) {
 		<tr>
 		<td class="quarter">But only after this date (optional):</td>
 		<td class="quarter"><span class="text"><input type="text"
-		name="start_date"></span></td>
+		name="start_date" placeholder="format: YYYY-MM-DD"></span></td>
 		<td>&nbsp;</td>
 		</tr>
 		</table>
